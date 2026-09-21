@@ -1,0 +1,12 @@
+{
+  "name": "br-b-js-structure-advisor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BR-B JavaScript Membership Advisor",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
