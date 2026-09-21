@@ -19,6 +19,8 @@ JavaScript 개발자가 반복적인 포함 여부 검색을 구현할 때, 과�
 
 ## 공개 앱
 
+- 12번 포트폴리오 대표작: https://my-page-m3r1.onrender.com/br-a/#works
+
 - Render 배포 URL: https://br-b-js-structure-advisor-1.onrender.com/
 - 로그인·계정 생성 없이 앱을 열 수 있도록 배포했습니다.
 
