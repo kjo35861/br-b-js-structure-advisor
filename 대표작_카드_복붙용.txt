@@ -2,5 +2,5 @@ JavaScript Membership Advisor
 
 과제 10 논문에서 측정한 Array.includes()와 Set.has()의 검색 성능과 Set 생성 비용을 실제 개발 판단 화면으로 옮긴 웹앱입니다. 논문이 직접 측정한 실험 조건을 선택하면 두 방식의 실제 측정값과 해당 조건에서 관찰된 결과를 확인할 수 있습니다.
 
-앱 링크: [배포 후 URL 입력]
+앱 링크: https://br-b-js-structure-advisor-1.onrender.com/
 논문: JavaScript 반복 검색에서 Array.includes와 Set.has의 성능 비교 — 배열 크기와 Set 생성 비용을 구분한 재현 가능 벤치마크
