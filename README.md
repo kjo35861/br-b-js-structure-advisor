@@ -1,7 +1,7 @@
 # BR-B — JavaScript Membership Advisor
 
 ## 한 줄 설명
-JavaScript 개발자가 반복적인 포함 여부 검색을 구현할 때, 과제 10 논문에서 **직접 측정한 두 시나리오와 5개 데이터 크기**를 비교해 `Array.includes()`와 `Set.has()`의 관찰 결과를 확인하도록 돕는 정적 웹앱입니다.
+JavaScript 개발자가 반복적인 포함 여부 검색을 구현할 때, 과제 10 논문에서 **직접 측정한 두 시나리오와 5개 데이터 크기**를 비교해 `Array.includes()`와 `Set.has()`의 관찰 결과를 확인하도록 돕는 웹앱입니다.
 
 ## 논문
 **JavaScript 반복 검색에서 Array.includes와 Set.has의 성능 비교 — 배열 크기와 Set 생성 비용을 구분한 재현 가능 벤치마크**
@@ -18,21 +18,33 @@ JavaScript 개발자가 반복적인 포함 여부 검색을 구현할 때, 과�
 3. **실험 결과 비교하기**를 눌러 두 방식의 실제 측정값과 관찰 결과를 확인한다.
 
 ## 실행 방법
-이 앱은 빌드 도구와 서버가 필요 없는 정적 HTML입니다.
 
-### 가장 간단한 실행
-1. 제출 ZIP을 새 폴더에 푼다.
+### 브라우저에서 바로 실행
+1. 저장소 또는 제출 ZIP을 새 폴더에 준비한다.
 2. 루트의 `index.html`을 더블클릭한다.
 3. 브라우저에서 바로 사용한다.
 
-### 로컬 서버로 실행하고 싶을 때
-Python이 설치되어 있다면 이 폴더에서 다음 명령을 실행합니다.
+### Node.js로 실행
+별도 npm 패키지 설치가 필요하지 않습니다.
 
 ```bash
-python -m http.server 8000
+npm start
 ```
 
-그 다음 브라우저에서 `http://localhost:8000`을 엽니다.
+기본 로컬 포트는 `10000`이며, Render에서는 `PORT` 환경 변수를 자동으로 사용합니다.
+
+## Render 배포
+이 저장소는 Render의 **Web Service + Docker** 배포를 바로 사용할 수 있도록 구성되어 있습니다.
+
+1. Render에서 **New Web Service**를 선택합니다.
+2. 저장소 `kjo35861/br-b-js-structure-advisor`를 선택합니다.
+3. **Language: Docker**를 선택합니다.
+4. **Branch: main**을 선택합니다.
+5. **Root Directory**는 비워 둡니다.
+6. 별도 Build Command / Start Command는 입력하지 않습니다.
+7. **Deploy Web Service**를 누릅니다.
+
+Dockerfile이 `node:22-alpine` 환경에서 `server.js`를 실행하며, 서버는 Render가 제공하는 `PORT`와 `0.0.0.0`에 바인딩됩니다.
 
 ## 앱이 실제로 사용하는 논문 데이터
 | 원소 수 | Array 검색 중앙값(ns) | Set 검색 중앙값(ns) | Array 100회(ms) | Set 생성+100회(ms) | 생성비용 포함 100회 관찰 결과 |
@@ -62,8 +74,12 @@ python -m http.server 8000
 논문 수치는 Node.js v24.19.0 / V8 13.6, 숫자 자료형, 존재하지 않는 값(-1) 검색의 특정 환경에서 얻은 경험적 결과입니다. 언어 표준이 보장하는 절대 임계값이나 모든 애플리케이션에 그대로 적용되는 규칙이 아닙니다.
 
 ## 파일 구성
-- `index.html` — 실행 앱
-- `README.md` — 실행 방법과 논문 적용 범위
+- `index.html` — 앱 화면
+- `server.js` — Render/Node용 정적 파일 서버
+- `package.json` — Node 실행 스크립트
+- `Dockerfile` — Render Docker 배포 설정
+- `.dockerignore` — Docker 빌드 제외 파일
+- `README.md` — 실행·배포 방법과 논문 적용 범위
 - `제출문.md` — 짧은 확인 방법과 AI/본인 판단 정리
 - `완주_체크리스트.md` — BR-B 통과 기준 점검
 - `대표작_카드_복붙용.txt` — 12번 사이트 대표작 영역에 넣을 문구
