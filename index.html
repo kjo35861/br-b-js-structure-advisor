@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JS Membership Advisor | Array.includes vs Set.has</title>
+  <style>
+    :root{--bg:#07111f;--panel:#0d1b2c;--panel2:#102238;--text:#edf5ff;--muted:#9db0c6;--line:#203751;--accent:#65d6ff;--good:#78e08f;--warn:#ffd166;--bad:#ff7b7b;--shadow:0 18px 60px rgba(0,0,0,.28)}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#10233a 0,#07111f 42%,#050b14 100%);color:var(--text);min-height:100vh}
+    .wrap{width:min(1080px,92vw);margin:0 auto;padding:52px 0 72px}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:stretch}.card{background:linear-gradient(180deg,rgba(16,34,56,.96),rgba(10,24,40,.96));border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
+    .hero-main{padding:34px}.eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:var(--accent);font-weight:800;letter-spacing:.08em;text-transform:uppercase}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)}
+    h1{font-size:clamp(34px,5vw,58px);line-height:1.04;margin:14px 0 18px;letter-spacing:-.04em}.lead{font-size:18px;line-height:1.75;color:#c8d6e5;margin:0}.thesis{margin-top:24px;padding:18px 20px;border-radius:16px;background:rgba(101,214,255,.08);border:1px solid rgba(101,214,255,.22);color:#dbf7ff;line-height:1.65}
+    .hero-side{padding:28px}.hero-side h2{font-size:18px;margin:0 0 16px}.metric{padding:17px 0;border-top:1px solid var(--line)}.metric:first-of-type{border-top:0}.metric strong{display:block;font-size:29px;margin-bottom:4px}.metric span{color:var(--muted);font-size:14px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px;margin-top:28px}.form{padding:26px}.form h2,.result h2,.evidence h2{margin:0 0 20px;font-size:22px}.field{margin-bottom:18px}label{display:block;font-weight:750;margin-bottom:8px}.help{font-size:13px;color:var(--muted);margin-top:7px;line-height:1.5}input,select{width:100%;border:1px solid #29435f;background:#081523;color:var(--text);padding:13px 14px;border-radius:12px;font-size:16px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(101,214,255,.12)}
+    button{width:100%;border:0;border-radius:13px;padding:14px 18px;font-size:16px;font-weight:850;background:linear-gradient(90deg,#68d8ff,#8bf0d2);color:#04111a;cursor:pointer;transition:.15s transform ease,.15s filter ease}button:hover{transform:translateY(-1px);filter:brightness(1.04)}
+    .result{padding:26px}.result-box{border:1px solid var(--line);background:#081523;border-radius:18px;padding:24px;min-height:310px}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;background:rgba(120,224,143,.13);color:var(--good);border:1px solid rgba(120,224,143,.25)}.recommend{font-size:32px;font-weight:900;letter-spacing:-.03em;margin:14px 0 10px}.why{color:#c8d6e5;line-height:1.7}.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.fact{padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--panel2)}.fact b{display:block;font-size:18px;margin-bottom:4px}.fact span{font-size:12px;color:var(--muted)}
+    .code{margin-top:18px;background:#050b12;border:1px solid #1b2c41;border-radius:14px;padding:16px;overflow:auto;color:#d9f6ff;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap}.note{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.6}.evidence{margin-top:28px;padding:26px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line);font-size:14px}th{color:#a9bfd4;font-size:12px;text-transform:uppercase;letter-spacing:.04em}.win-array{color:var(--warn);font-weight:800}.win-set{color:var(--good);font-weight:800}.footer{margin-top:24px;color:#7f95ad;font-size:13px;line-height:1.6;text-align:center}
+    @media(max-width:820px){.hero,.grid{grid-template-columns:1fr}.wrap{padding-top:24px}.hero-main{padding:26px}.facts{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <article class="card hero-main">
+        <div class="eyebrow"><span class="dot"></span> Research → Application</div>
+        <h1>JavaScript Membership Advisor</h1>
+        <p class="lead"><strong>논문 제목:</strong> JavaScript 반복 검색에서 Array.includes와 Set.has의 성능 비교 — 배열 크기와 Set 생성 비용을 구분한 재현 가능 벤치마크</p>
+        <div class="thesis"><strong>이 앱은 누구를 어떻게 돕습니다?</strong><br>JavaScript 개발자가 반복적인 포함 여부 검색을 구현할 때, 논문에서 직접 측정한 조건 안에서 <code>Array.includes()</code>와 <code>Set.has()</code>의 측정값과 관찰 결과를 빠르게 확인하도록 돕습니다.</div>
+      </article>
+      <aside class="card hero-side">
+        <h2>논문 핵심 결과</h2>
+        <div class="metric"><strong>5개 크기 × 30회</strong><span>10, 100, 1,000, 10,000, 100,000 원소에서 총 150건 측정</span></div>
+        <div class="metric"><strong>검색만 보면 Set 우세</strong><span>이미 생성된 Set의 부재값 검색은 모든 실험 크기에서 더 빨랐음</span></div>
+        <div class="metric"><strong>100 ↔ 1,000</strong><span>Set 생성 비용 + 100회 검색 기준으로 관찰된 전환 구간</span></div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <article class="card form">
+        <h2>1. 논문 조건 선택</h2>
+        <div class="field">
+          <label for="mode">비교 상황</label>
+          <select id="mode">
+            <option value="build">배열에서 시작 — Set 생성 비용 + 100회 검색 비교</option>
+            <option value="ready">이미 Array와 Set이 준비됨 — 검색 자체만 비교</option>
+          </select>
+          <div class="help">논문이 실제로 측정한 두 시나리오 중 하나를 고릅니다.</div>
+        </div>
+        <div class="field">
+          <label for="size">데이터 원소 수</label>
+          <input id="size" type="number" min="1" step="1" value="1000" />
+          <div class="help">논문에서 직접 측정한 값은 10 / 100 / 1,000 / 10,000 / 100,000입니다. 다른 값은 추정하지 않고 안내만 표시합니다.</div>
+        </div>
+        <div class="field">
+          <label>판단 기준</label>
+          <div class="help" id="criterion">Set 생성 비용을 포함한 100회 부재값 검색의 실제 측정값을 비교합니다.</div>
+        </div>
+        <button id="analyze">실험 결과 비교하기</button>
+      </article>
+
+      <article class="card result">
+        <h2>2. 논문 조건에서의 관찰 결과</h2>
+        <div id="resultBox" class="result-box"></div>
+      </article>
+    </section>
+
+    <section class="card evidence">
+      <h2>3. 앱이 실제로 사용하는 논문 데이터</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>원소 수</th><th>Array 검색 ns</th><th>Set 검색 ns</th><th>Array 100회 ms</th><th>Set 생성+100회 ms</th><th>생성비용 포함 100회 관찰 결과</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="note">주의: 이 수치는 Node.js v24.19.0 / V8 13.6, 숫자 자료형, 존재하지 않는 값(-1) 검색, 논문의 특정 실행 환경에서 얻은 경험적 결과입니다. 언어 표준이 보장하는 절대 임계값이 아닙니다.</p>
+    </section>
+
+    <p class="footer">BR-B · 논문의 결론을 실제 개발 판단 도구로 변환한 제출용 정적 웹앱 · 개인정보/API 키 사용 없음</p>
+  </main>
+<script>
+const data = [
+  {size:10,arrayNs:12.77,setNs:3.67,array100:0.002188,setBuild100:0.002780,winner:'Array.includes'},
+  {size:100,arrayNs:79.35,setNs:3.59,array100:0.008438,setBuild100:0.008652,winner:'Array.includes'},
+  {size:1000,arrayNs:727.18,setNs:6.42,array100:0.069918,setBuild100:0.034491,winner:'Set.has'},
+  {size:10000,arrayNs:7194.93,setNs:6.51,array100:0.712055,setBuild100:0.500587,winner:'Set.has'},
+  {size:100000,arrayNs:76529.70,setNs:3.89,array100:7.592631,setBuild100:5.905484,winner:'Set.has'}
+];
+
+function fmt(v,d=3){return Number(v).toLocaleString('ko-KR',{maximumFractionDigits:d});}
+function codeFor(rec,mode){
+  if(rec==='Set.has') return mode==='ready' ? `const exists = mySet.has(target);` : `const lookup = new Set(items);
+const exists = lookup.has(target);`;
+  return `const exists = items.includes(target);`;
+}
+function render(){
+  const raw=document.querySelector('#size').value.trim();
+  const size=Number(raw);
+  const mode=document.querySelector('#mode').value;
+  const box=document.querySelector('#resultBox');
+  const criterion=document.querySelector('#criterion');
+
+  if(raw==='' || !Number.isFinite(size) || size<1 || !Number.isInteger(size)){
+    box.innerHTML=`<span class="badge" style="color:var(--bad);border-color:rgba(255,123,123,.25);background:rgba(255,123,123,.1)">입력 확인</span><div class="recommend">1 이상의 정수로 입력하세요.</div><p class="why">잘못된 입력이 들어와도 앱은 멈추지 않고 안내를 표시합니다.</p>`;
+    return;
+  }
+
+  const row=data.find(r=>r.size===size);
+  if(!row){
+    box.innerHTML=`<span class="badge" style="color:var(--warn);border-color:rgba(255,209,102,.25);background:rgba(255,209,102,.1)">측정 범위 밖</span><div class="recommend">논문에서 직접 측정하지 않은 크기입니다.</div><p class="why">${fmt(size,0)}개에 대해 가장 가까운 값으로 추정하거나 추천하지 않습니다. 10 / 100 / 1,000 / 10,000 / 100,000 중 하나를 입력하면 논문의 실제 측정값을 확인할 수 있습니다.</p>`;
+    return;
+  }
+
+  let rec, reason, factA, factB, scenario;
+  if(mode==='ready'){
+    criterion.textContent='이미 생성된 Array와 Set에서 존재하지 않는 값(-1)을 검색한 실제 중앙값을 비교합니다.';
+    rec='Set.has';
+    const ratio=row.arrayNs/row.setNs;
+    reason=`${fmt(row.size,0)}개 조건에서 검색 1회 환산 중앙값은 Array.includes ${fmt(row.arrayNs,2)}ns, Set.has ${fmt(row.setNs,2)}ns였습니다. 이 실험 조건에서는 Set.has가 약 ${fmt(ratio,2)}배 빨랐습니다.`;
+    factA=`${fmt(row.arrayNs,2)} ns`;
+    factB=`${fmt(row.setNs,2)} ns`;
+    scenario='검색 자체 비교';
+  } else {
+    criterion.textContent='배열 100회 검색과 new Set(array) 생성 + Set.has 100회 검색의 실제 측정값을 비교합니다.';
+    rec=row.winner;
+    reason=`${fmt(row.size,0)}개 조건에서 Array.includes 100회는 ${fmt(row.array100,6)}ms, Set 생성 + Set.has 100회는 ${fmt(row.setBuild100,6)}ms였습니다. 따라서 논문의 이 조건에서 더 짧게 관찰된 방식은 ${rec}입니다.`;
+    factA=`${fmt(row.array100,6)} ms`;
+    factB=`${fmt(row.setBuild100,6)} ms`;
+    scenario='생성 비용 포함 100회';
+  }
+
+  const cls=rec==='Set.has'?'':'style="color:var(--warn);border-color:rgba(255,209,102,.25);background:rgba(255,209,102,.1)"';
+  box.innerHTML=`<span class="badge" ${cls}>논문에서 관찰된 결과</span><div class="recommend">${rec}</div><p class="why">${reason}</p><div class="facts"><div class="fact"><b>${factA}</b><span>Array.includes 측정값</span></div><div class="fact"><b>${factB}</b><span>${mode==='ready'?'Set.has':'Set 생성 + Set.has'} 측정값</span></div></div><div class="code">${codeFor(rec,mode)}</div><p class="note">실험 범위: Node.js v24.19.0 / V8 13.6, 숫자 데이터, 존재하지 않는 값(-1) 검색. 이 결과는 ${scenario}의 경험적 측정이며 JavaScript 전체 환경의 절대 규칙이 아닙니다.</p>`;
+}
+
+document.querySelector('#rows').innerHTML=data.map(r=>`<tr><td>${fmt(r.size,0)}</td><td>${fmt(r.arrayNs,2)}</td><td>${fmt(r.setNs,2)}</td><td>${fmt(r.array100,6)}</td><td>${fmt(r.setBuild100,6)}</td><td class="${r.winner==='Set.has'?'win-set':'win-array'}">${r.winner}</td></tr>`).join('');
+document.querySelector('#analyze').addEventListener('click',render);
+document.querySelector('#mode').addEventListener('change',render);
+document.querySelector('#size').addEventListener('keydown',e=>{if(e.key==='Enter')render()});
+render();
+</script>
+</body>
+</html>
